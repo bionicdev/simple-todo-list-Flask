@@ -1,0 +1,98 @@
+{% extends "bootstrap/base.html" %}
+
+{% from 'macros/notifications.html' import notification %}
+
+{% block head %}
+
+	{{ super() }}
+
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+{% endblock %}
+
+{% block title %} {{ title }} {% endblock %}
+
+
+{% block body %}
+
+	<div class="container">
+		<div class="row">
+
+			<h1 class="text-center">Task Master</h1>
+
+			<div class="col-xs-12 panel panel-default">
+
+				<form action="{{ url_for('todo_create') }}" method="post" class="navbar-form navbar-left">
+					<div class="form-group">
+						<input type="text" name="content" class="form-control">
+					</div>
+						<button type="submit" class="btn btn-warning">
+							Add Task
+						</button>
+				</form>
+
+			</div>
+
+		</div>
+
+		{{ notification(get_flashed_messages(with_categories=true)) }}
+
+		<div class="row">
+			<table class="table table-striped">
+
+				<tr>
+					<th>Task</th>
+					<th>Added</th>
+					<th>Created</th>
+					<th>Updated</th>
+					<th class="text-center">Actions</th>
+				</tr>
+				
+				{% for todo in todos %}
+
+					<tr>
+						<td>{{ todo.content }}</td>
+						<td>{{ todo.complete }}</td>
+						<td>{{ todo.created_on }}</td>
+						<td>{{ todo.updated_on }}</td>
+						<td>
+							<div class="row">
+								<div class="col-xs-2 col-xs-offset-3">
+									<a href="{{ url_for('todo_update', id=todo.id) }}" class="btn btn-sm btn-success">
+										<span class="glyphicon glyphicon-pencil"></span>
+									</a>	
+								</div>
+								<div class="col-xs-2">
+									<form method="POST" action="{{ url_for('todo_delete', id=todo.id) }}">
+										<button type="submit" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span></button>
+									</form>
+								</div>
+							</div>
+						</td>
+					</tr>
+
+				{% endfor %}
+
+			</table>
+		</div>
+
+		{% if edit_todo %}
+
+			<div class="row">
+				<div class="col-xs-12 panel panel-default">
+					<form action="{{ url_for('todo_update', id=edit_todo.id) }}" method="POST" class="navbar-form navbar-left">
+						<div class="form-group">
+							<input type="text" name="content" value="{{ edit_todo.content }}" class="form-control">
+						</div>
+							<button type="submit" class="btn btn-success">
+								edit Task
+							</button>
+					</form>
+				</div>
+			</div>
+
+		{% endif %}
+
+	</div>
+
+{% endblock%}
